@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Vyapar Mitra</title>
+  <meta name="description" content="AI business advisory for farmers, artisans, shops, MSMEs, startups and companies.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..800,50&family=Mukta:wght@400;500;700&family=Noto+Sans+Tamil:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="brand">
+      <span class="seal" aria-hidden="true">व्या</span>
+      <div>
+        <h1>Vyapar Mitra</h1>
+        <p class="tagline">Researched business advice for every kind of business: farm, shop, workshop, startup or company</p>
+      </div>
+    </div>
+    <div class="head-right">
+      <button class="theme-toggle" id="theme-toggle" type="button" title="Switch light / dark theme" aria-label="Switch light / dark theme">
+        <span class="sun" aria-hidden="true">☀︎ Light</span><span class="moon" aria-hidden="true">☾ Dark</span>
+      </button>
+      <div class="status" id="status"><span class="dot"></span><span id="status-text">Connecting…</span></div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- ============ PROFILE ============ -->
+    <aside class="ledger" aria-label="Business profile">
+      <div class="ledger-head">
+        <h2>Your business</h2>
+        <select id="profile-select" aria-label="Choose profile"></select>
+      </div>
+
+      <form id="profile-form" class="profile-form" autocomplete="off">
+        <fieldset class="segments" id="segment-picker">
+          <legend>I am a…</legend>
+        </fieldset>
+
+        <label>Name <input name="name" required placeholder="e.g. Murugan"></label>
+        <label>What do you grow / make / sell? <input name="business" placeholder="e.g. tomato & ragi, 3 acres"></label>
+        <div class="row">
+          <label>Village / town <input name="location" placeholder="e.g. Hosur, Krishnagiri"></label>
+          <label>State <input name="state" placeholder="e.g. Tamil Nadu"></label>
+        </div>
+        <div class="row">
+          <label>Stage
+            <select name="stage">
+              <option value="">—</option>
+              <option>Just an idea</option>
+              <option>Starting (0-1 yr)</option>
+              <option>Running (1-5 yrs)</option>
+              <option>Growing / scaling</option>
+            </select>
+          </label>
+          <label>Answer language
+            <select name="language">
+              <option>English</option><option>Tamil</option><option>Hindi</option><option>Telugu</option>
+              <option>Kannada</option><option>Malayalam</option><option>Marathi</option><option>Bengali</option>
+              <option>Gujarati</option><option>Punjabi</option><option>Odia</option>
+            </select>
+          </label>
+        </div>
+        <label>Yearly turnover / scale <input name="turnover" placeholder="e.g. ₹8 lakh, 4 workers"></label>
+        <label>Anything else <textarea name="details" rows="2" placeholder="loans, problems, goals…"></textarea></label>
+        <input type="hidden" name="segment">
+        <div class="form-actions">
+          <button type="submit" class="btn ink" id="save-profile">Save profile</button>
+          <button type="button" class="btn ghost" id="new-profile">New</button>
+        </div>
+      </form>
+    </aside>
+
+    <!-- ============ WORKSPACE ============ -->
+    <section class="workspace">
+      <nav class="tabs" role="tablist">
+        <button role="tab" class="tab active" data-tab="advisor" aria-selected="true">Ask the advisor</button>
+        <button role="tab" class="tab" data-tab="dictionary" aria-selected="false">Dictionary</button>
+        <button role="tab" class="tab" data-tab="startup" aria-selected="false">Startup toolkit</button>
+        <button role="tab" class="tab" data-tab="knowledge" aria-selected="false">Schemes &amp; knowledge</button>
+        <button role="tab" class="tab" data-tab="history" aria-selected="false">History</button>
+      </nav>
+
+      <!-- Advisor -->
+      <div class="panel active" id="panel-advisor" role="tabpanel">
+        <div class="composer">
+          <div class="modes" role="radiogroup" aria-label="Answer depth">
+            <label><input type="radio" name="mode" value="quick" checked><span>Quick answer</span></label>
+            <label><input type="radio" name="mode" value="research"><span>Deep research report</span></label>
+            <label><input type="radio" name="mode" value="nearby"><span>Near me</span></label>
+          </div>
+          <div class="ask-box">
+            <textarea id="question" rows="3" placeholder="Ask anything about your business: prices, loans, schemes, what to grow, how to sell online, how to raise funds…"></textarea>
+            <div class="ask-actions">
+              <button class="btn icon" id="mic" type="button" title="Speak your question" aria-label="Speak your question">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+              </button>
+              <button class="btn marigold" id="ask" type="button">Ask <kbd>Ctrl ↵</kbd></button>
+            </div>
+          </div>
+          <div class="suggestions" id="suggestions"></div>
+        </div>
+        <div id="answers" class="answers"></div>
+      </div>
+
+      <!-- Dictionary (built from dictionary/ folder + Business_Adv knowledge) -->
+      <div class="panel" id="panel-dictionary" role="tabpanel" hidden>
+        <div class="kb-toolbar">
+          <input id="dict-search" type="search" placeholder="Search business words: GST, Udyam, CAC, mandi…">
+          <select id="dict-category">
+            <option value="">All topics</option>
+            <option value="finance">Finance</option><option value="compliance">Compliance</option>
+            <option value="market">Market</option><option value="scheme">Schemes</option>
+            <option value="practice">Good practice</option><option value="startup">Startup</option>
+          </select>
+        </div>
+        <div class="dict-tags" id="dict-quick"></div>
+        <div id="dict-list" class="kb-list"></div>
+      </div>
+
+      <!-- Startup toolkit -->
+      <div class="panel" id="panel-startup" role="tabpanel" hidden>
+        <p class="hint">Special startup helpers drawn from your Business_Adv knowledge base. Click a card to ask the advisor with a ready-made expert prompt, or work the steps yourself.</p>
+        <div class="tool-grid">
+          <article class="tool-card" aria-label="Profit calculator">
+            <h4>💰 Profit calculator</h4>
+            <p>Price − cost = profit. Check margin before you fix a price.</p>
+            <div class="calc-grid">
+              <label>Cost per unit (₹) <input id="calc-cost" type="number" min="0" value="100"></label>
+              <label>Selling price (₹) <input id="calc-price" type="number" min="0" value="150"></label>
+              <label>Units / month <input id="calc-units" type="number" min="0" value="200"></label>
+              <label>Monthly fixed cost (₹) <input id="calc-fixed" type="number" min="0" value="5000"></label>
+            </div>
+            <div class="calc-result" id="calc-result">—</div>
+            <div class="form-actions">
+              <button class="btn ghost" id="calc-ask" type="button">Ask advisor about my margin →</button>
+            </div>
+          </article>
+        </div>
+        <div id="startup-list" class="tool-grid"></div>
+      </div>
+
+      <!-- Knowledge -->
+      <div class="panel" id="panel-knowledge" role="tabpanel" hidden>
+        <div class="kb-toolbar">
+          <input id="kb-search" type="search" placeholder="Search schemes, loans, compliance…">
+          <select id="kb-segment">
+            <option value="">All segments</option>
+          </select>
+          <button class="btn ghost" id="kb-add-toggle" type="button">+ Add local entry</button>
+        </div>
+        <form id="kb-form" class="kb-form" hidden>
+          <p class="hint">Add knowledge only you have: a local co-operative, a buyer, a state scheme. The advisor uses it in every answer.</p>
+          <div class="row">
+            <label>Segment <select name="segment" id="kb-form-segment"><option value="all">All</option></select></label>
+            <label>Type
+              <select name="category">
+                <option value="scheme">Scheme</option><option value="finance">Finance</option>
+                <option value="market">Market / buyer</option><option value="compliance">Compliance</option>
+                <option value="practice">Good practice</option>
+              </select>
+            </label>
+          </div>
+          <label>Title <input name="title" required></label>
+          <label>Summary <textarea name="summary" rows="2" required></textarea></label>
+          <div class="row">
+            <label>Who is eligible <input name="eligibility"></label>
+            <label>Benefits <input name="benefits"></label>
+          </div>
+          <div class="row">
+            <label>How to apply / contact <input name="how_to_apply"></label>
+            <label>Link <input name="url" type="url" placeholder="https://"></label>
+          </div>
+          <label>Keywords <input name="tags" placeholder="words people may search for"></label>
+          <div class="form-actions"><button class="btn ink" type="submit">Save entry</button></div>
+        </form>
+        <div id="kb-list" class="kb-list"></div>
+      </div>
+
+      <!-- History -->
+      <div class="panel" id="panel-history" role="tabpanel" hidden>
+        <div id="history-list" class="answers"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    Advice is AI-generated from live Google Search results and a local knowledge base. Check amounts and deadlines on the official portal before you apply or invest.
+  </footer>
+
+  <template id="answer-tpl">
+    <article class="answer">
+      <header>
+        <span class="stamp"></span>
+        <h3 class="q"></h3>
+      </header>
+      <div class="md"></div>
+      <div class="queries"></div>
+      <div class="sources"></div>
+      <div class="search-widget"></div>
+      <footer class="answer-foot">
+        <span class="meta"></span>
+        <span class="answer-tools">
+          <button class="link speak" type="button">▶ Listen</button>
+          <button class="link copy" type="button">Copy</button>
+          <button class="link download-btn" type="button">⬇ Save</button>
+          <button class="link print-btn" type="button">🖨 Print</button>
+          <button class="link del" type="button" hidden>Delete</button>
+        </span>
+      </footer>
+    </article>
+  </template>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
